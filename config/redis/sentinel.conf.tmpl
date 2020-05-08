@@ -1,0 +1,11 @@
+bind 0.0.0.0
+port 26379
+daemonize yes
+pidfile "/var/run/sentinel/redis-sentinel.pid"
+logfile "/var/log/redis/redis-sentinel.log"
+dir "/var/lib/redis"
+sentinel monitor redis-master REDIS_MASTER_HOST 6379 2
+sentinel down-after-milliseconds redis-master 3000
+sentinel failover-timeout redis-master 6000
+sentinel parallel-syncs redis-master  1
+protected-mode no

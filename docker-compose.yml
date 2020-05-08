@@ -1,0 +1,44 @@
+version: '2.4'
+services:
+  redis-master:
+    build:
+      context: .
+    container_name: redis-master
+    expose:
+      - '6379'
+      - '26379'
+       
+  redis-slave:
+    build:
+      context: .  
+    scale: 2
+    depends_on:
+      - redis-master
+    environment:
+      - REDIS_MASTER_HOST=redis-master
+    expose:
+      - '6379'
+      - '26379'
+
+  redis-proxy:
+    image: haproxy:1.8
+    container_name: redis-proxy
+    volumes:
+      - ./config/haproxy:/usr/local/etc/haproxy:ro
+    depends_on:
+      - redis-master
+      - redis-slave
+    ports:
+      - '6379'
+      - '1936:1936'
+
+  ds:
+    container_name: ds
+    image: '${COMPANY_NAME:-onlyoffice}/${DS_CONTAINER_NAME:-documentserver-ie:latest}'
+    ports: 
+      - '80:80'
+    environment:
+      - REDIS_SERVER_HOST=redis-proxy
+    stdin_open: true
+    depends_on: 
+      - 'redis-proxy'     
