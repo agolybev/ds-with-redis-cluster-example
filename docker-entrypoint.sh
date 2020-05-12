@@ -11,6 +11,8 @@ cp -f ${SENTINEL_CONF_TMPL} ${SENTINEL_CONF}
 
 if [ "${REDIS_MASTER_HOST:=localhost}" == "localhost" ]; then
   sed '/slaveof/d' -i ${REDIS_CONF}
+else
+  sed 's,REDIS_MASTER_HOST,'${REDIS_MASTER_HOST}',' -i ${REDIS_CONF}
 fi
 
 sed 's,REDIS_MASTER_HOST,'${REDIS_MASTER_HOST}',' -i ${SENTINEL_CONF}
