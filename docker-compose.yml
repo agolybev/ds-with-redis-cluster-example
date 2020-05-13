@@ -31,6 +31,12 @@ services:
     ports:
       - '6379'
       - '1936:1936'
+    volumes_from:
+      - syslog
+
+  syslog:
+    image: outstand/syslog-ng-stdout:latest
+    container_name: syslog
 
   ds:
     container_name: ds
